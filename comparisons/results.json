@@ -1,0 +1,184 @@
+[
+  {
+    "item_name": "item_01_54928954",
+    "stats": {
+      "equal": 4,
+      "similar": 3,
+      "replaced": 1,
+      "deleted": 0,
+      "inserted": 0,
+      "total_words1": 8,
+      "total_words2": 8
+    },
+    "comparison_file": "item_01_54928954_comparison.html"
+  },
+  {
+    "item_name": "item_02_54928955",
+    "stats": {
+      "equal": 16,
+      "similar": 2,
+      "replaced": 5,
+      "deleted": 44,
+      "inserted": 25,
+      "total_words1": 67,
+      "total_words2": 48
+    },
+    "comparison_file": "item_02_54928955_comparison.html"
+  },
+  {
+    "item_name": "item_03_54928956",
+    "stats": {
+      "equal": 15,
+      "similar": 2,
+      "replaced": 1,
+      "deleted": 16,
+      "inserted": 27,
+      "total_words1": 34,
+      "total_words2": 45
+    },
+    "comparison_file": "item_03_54928956_comparison.html"
+  },
+  {
+    "item_name": "item_04_54928957",
+    "stats": {
+      "equal": 275,
+      "similar": 28,
+      "replaced": 4,
+      "deleted": 4,
+      "inserted": 7,
+      "total_words1": 311,
+      "total_words2": 314
+    },
+    "comparison_file": "item_04_54928957_comparison.html"
+  },
+  {
+    "item_name": "item_05_54928958",
+    "stats": {
+      "equal": 296,
+      "similar": 26,
+      "replaced": 2,
+      "deleted": 1,
+      "inserted": 0,
+      "total_words1": 325,
+      "total_words2": 324
+    },
+    "comparison_file": "item_05_54928958_comparison.html"
+  },
+  {
+    "item_name": "item_06_54928959",
+    "stats": {
+      "equal": 265,
+      "similar": 28,
+      "replaced": 3,
+      "deleted": 7,
+      "inserted": 6,
+      "total_words1": 303,
+      "total_words2": 302
+    },
+    "comparison_file": "item_06_54928959_comparison.html"
+  },
+  {
+    "item_name": "item_07_54928960",
+    "stats": {
+      "equal": 313,
+      "similar": 26,
+      "replaced": 8,
+      "deleted": 5,
+      "inserted": 3,
+      "total_words1": 352,
+      "total_words2": 350
+    },
+    "comparison_file": "item_07_54928960_comparison.html"
+  },
+  {
+    "item_name": "item_08_54928961",
+    "stats": {
+      "equal": 214,
+      "similar": 19,
+      "replaced": 2,
+      "deleted": 37,
+      "inserted": 30,
+      "total_words1": 272,
+      "total_words2": 265
+    },
+    "comparison_file": "item_08_54928961_comparison.html"
+  },
+  {
+    "item_name": "item_09_54928962",
+    "stats": {
+      "equal": 212,
+      "similar": 31,
+      "replaced": 8,
+      "deleted": 20,
+      "inserted": 15,
+      "total_words1": 271,
+      "total_words2": 266
+    },
+    "comparison_file": "item_09_54928962_comparison.html"
+  },
+  {
+    "item_name": "item_10_54928963",
+    "stats": {
+      "equal": 50,
+      "similar": 19,
+      "replaced": 6,
+      "deleted": 8,
+      "inserted": 2,
+      "total_words1": 83,
+      "total_words2": 77
+    },
+    "comparison_file": "item_10_54928963_comparison.html"
+  },
+  {
+    "item_name": "item_11_54928964",
+    "stats": {
+      "equal": 120,
+      "similar": 13,
+      "replaced": 10,
+      "deleted": 62,
+      "inserted": 98,
+      "total_words1": 205,
+      "total_words2": 241
+    },
+    "comparison_file": "item_11_54928964_comparison.html"
+  },
+  {
+    "item_name": "item_12_54928965",
+    "stats": {
+      "equal": 25,
+      "similar": 8,
+      "replaced": 1,
+      "deleted": 6,
+      "inserted": 4,
+      "total_words1": 40,
+      "total_words2": 38
+    },
+    "comparison_file": "item_12_54928965_comparison.html"
+  },
+  {
+    "item_name": "item_13_54928966",
+    "stats": {
+      "equal": 89,
+      "similar": 5,
+      "replaced": 4,
+      "deleted": 7,
+      "inserted": 6,
+      "total_words1": 105,
+      "total_words2": 104
+    },
+    "comparison_file": "item_13_54928966_comparison.html"
+  },
+  {
+    "item_name": "item_14_54928967",
+    "stats": {
+      "equal": 68,
+      "similar": 9,
+      "replaced": 0,
+      "deleted": 0,
+      "inserted": 0,
+      "total_words1": 77,
+      "total_words2": 77
+    },
+    "comparison_file": "item_14_54928967_comparison.html"
+  }
+]

@@ -1,8 +1,12 @@
 # Dependencies
 node_modules/
+.venv/
 
 # Intermediary artifacts (stored in archive/)
 archive/
+
+# Environment secrets
+.env
 
 # OS files
 .DS_Store

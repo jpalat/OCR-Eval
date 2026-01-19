@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Intermediary artifacts (stored in archive/)
+archive/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+*.swp
+*.swo
+*~
+
+# Test directories (if not needed)
+test1/

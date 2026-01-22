@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>OCR Comparison - item_10_54928963</title>
+    <style>
+        body { font-family: Georgia, serif; margin: 20px; background: #f5f5f5; line-height: 1.6; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        h1 { color: #333; text-align: center; }
+        h2 { color: #555; }
+        .panel { background: white; padding: 20px; margin: 15px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .panel h2 { margin-top: 0; color: #444; border-bottom: 2px solid #007acc; padding-bottom: 10px; }
+        .text { line-height: 2; font-size: 16px; white-space: pre-wrap; }
+        .error { background: #fff3cd; border-bottom: 2px solid #ffc107; cursor: help; }
+        .deleted { background: #f8d7da; text-decoration: line-through; color: #721c24; }
+        .inserted { background: #d4edda; color: #155724; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; }
+        .stat-box { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-box.good { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); }
+        .stat-box.warn { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .stat-box .value { font-size: 28px; font-weight: bold; }
+        .stat-box .label { font-size: 12px; opacity: 0.9; text-transform: uppercase; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; }
+        tr.similar td { background: #fff3cd; }
+        tr.replaced td { background: #ffe6e6; }
+        tr.deleted td { background: #f8d7da; }
+        tr.inserted td { background: #d4edda; }
+        .legend { display: flex; gap: 20px; flex-wrap: wrap; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-color { width: 20px; height: 20px; border-radius: 3px; }
+        .image-preview { max-width: 100%; max-height: 400px; border: 1px solid #ddd; }
+        .side-by-side { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .side-by-side { grid-template-columns: 1fr; } }
+        .nav { text-align: center; margin: 20px 0; }
+        .nav a { margin: 0 10px; color: #007acc; text-decoration: none; }
+        .nav a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="nav">
+            <a href="summary_report.html">← Back to Summary</a>
+        </div>
+
+        <h1>OCR Comparison: item_10_54928963</h1>
+
+        <div class="panel">
+            <h2>Comparison Mode</h2>
+            <p><strong>Options:</strong> case-insensitive, ignoring punctuation</p>
+            <p><em>Case differences are ignored in accuracy calculations.</em></p>
+            <p><em>Punctuation is ignored in accuracy calculations.</em></p>
+        </div>
+
+        <div class="panel">
+            <h2>Source Image</h2>
+            <img src="../images/item_10_54928963.jpg" alt="item_10_54928963" class="image-preview">
+        </div>
+
+        <div class="panel">
+            <h2>Statistics</h2>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="value">82</div>
+                    <div class="label">Source Words</div>
+                </div>
+                <div class="stat-box">
+                    <div class="value">77</div>
+                    <div class="label">OCR Words</div>
+                </div>
+                <div class="stat-box good">
+                    <div class="value">62</div>
+                    <div class="label">Exact Matches</div>
+                </div>
+                <div class="stat-box warn">
+                    <div class="value">23</div>
+                    <div class="label">Total Errors</div>
+                </div>
+                <div class="stat-box warn">
+                    <div class="value">75.6%</div>
+                    <div class="label">Word Accuracy</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Legend</h2>
+            <div class="legend">
+                <div class="legend-item"><span class="legend-color" style="background:#fff3cd;border:1px solid #ffc107;"></span> OCR Error (hover for details)</div>
+                <div class="legend-item"><span class="legend-color" style="background:#f8d7da;"></span> Deleted from source</div>
+                <div class="legend-item"><span class="legend-color" style="background:#d4edda;"></span> Inserted in OCR</div>
+            </div>
+        </div>
+
+        <div class="side-by-side">
+            <div class="panel">
+                <h2>Source Transcription</h2>
+                <div class="text">Statement of John <span class="error" title="OCR: Hough's">Houghs</span> services 1st <span class="deleted">tour</span> <span class="deleted">from</span> <span class="deleted">Jany</span> <span class="deleted">10th</span> to 15th April 1781 Private Capt Emory Militia Col Peyton 3 <span class="error" title="OCR: yrs">mos</span> <span class="error" title="OCR: 13.">15.</span> 2nd <span class="deleted">tour</span> <span class="deleted">July</span> <span class="deleted">5</span> to 1st Novr. 1781 <span class="error" title="OCR: 0.">Do.</span> Capt <span class="error" title="OCR: Smith.">Smiths.</span> <span class="error" title="OCR: 0.">Do.</span> Col <span class="error" title="OCR: Humphrys.">Humphreys</span> 3 <span class="error" title="OCR: mo.">Mos</span> <span class="error" title="OCR: 20.">25.</span> 7 <span class="error" title="OCR: mo.">mos</span> 10. Length of service 7 months 10 days Annual pension 24.42 Residence of applicant when called into the service <span class="error" title="OCR: Landon">Loudon</span> county Virginia Present age of applicant 79 years 3 months Proof of service Deposition of <span class="deleted">J.L.</span> Grant <span class="error" title="OCR: &amp;">and</span> David Test.</div>
+            </div>
+
+            <div class="panel">
+                <h2>Mistral OCR Output</h2>
+                <div class="text">Statement of John <span class="error" title="Source: Houghs">Hough's</span> Services 1st to 15th April 1781. private Capt. Emory Militia Col. Peyton. 3 <span class="error" title="Source: mos">yrs</span> <span class="error" title="Source: 15.">13.</span> 2nd to 1st Novr. 1781. <span class="error" title="Source: Do.">0.</span> Capt. <span class="error" title="Source: Smiths.">Smith.</span> <span class="error" title="Source: Do.">0.</span> Col. <span class="error" title="Source: Humphreys">Humphrys.</span> 3 <span class="error" title="Source: Mos">mo.</span> <span class="error" title="Source: 25.">20.</span> 7 <span class="error" title="Source: mos">mo.</span> 10. Length of service 7 months 10 days. Annual pension. <span class="inserted">H.</span> $24.42 Residence of applicant when called into the service <span class="error" title="Source: Loudon">Landon</span> county Virginia Present age of applicant 79 years 3 months Proof of service Deposition of <span class="inserted">J.</span> <span class="inserted">L.</span> Grant <span class="error" title="Source: and">&amp;</span> David Test.</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Differences List (23 items)</h2>
+            <table>
+                <tr><th>#</th><th>Source</th><th></th><th>OCR</th></tr>
+                <tr class="similar"><td>1</td><td>Houghs</td><td>→</td><td>Hough's</td></tr><tr class="deleted"><td>2</td><td>tour</td><td>→</td><td>(deleted)</td></tr><tr class="deleted"><td>3</td><td>from</td><td>→</td><td>(deleted)</td></tr><tr class="deleted"><td>4</td><td>Jany</td><td>→</td><td>(deleted)</td></tr><tr class="deleted"><td>5</td><td>10th</td><td>→</td><td>(deleted)</td></tr><tr class="replaced"><td>6</td><td>mos</td><td>→</td><td>yrs</td></tr><tr class="replaced"><td>7</td><td>15.</td><td>→</td><td>13.</td></tr><tr class="deleted"><td>8</td><td>tour</td><td>→</td><td>(deleted)</td></tr><tr class="deleted"><td>9</td><td>July</td><td>→</td><td>(deleted)</td></tr><tr class="deleted"><td>10</td><td>5</td><td>→</td><td>(deleted)</td></tr><tr class="replaced"><td>11</td><td>Do.</td><td>→</td><td>0.</td></tr><tr class="similar"><td>12</td><td>Smiths.</td><td>→</td><td>Smith.</td></tr><tr class="replaced"><td>13</td><td>Do.</td><td>→</td><td>0.</td></tr><tr class="similar"><td>14</td><td>Humphreys</td><td>→</td><td>Humphrys.</td></tr><tr class="similar"><td>15</td><td>Mos</td><td>→</td><td>mo.</td></tr><tr class="replaced"><td>16</td><td>25.</td><td>→</td><td>20.</td></tr><tr class="similar"><td>17</td><td>mos</td><td>→</td><td>mo.</td></tr><tr class="inserted"><td>18</td><td>(none)</td><td>→</td><td>H.</td></tr><tr class="similar"><td>19</td><td>Loudon</td><td>→</td><td>Landon</td></tr><tr class="deleted"><td>20</td><td>J.L.</td><td>→</td><td>(deleted)</td></tr><tr class="inserted"><td>21</td><td>(none)</td><td>→</td><td>J.</td></tr><tr class="inserted"><td>22</td><td>(none)</td><td>→</td><td>L.</td></tr><tr class="replaced"><td>23</td><td>and</td><td>→</td><td>&amp;</td></tr>
+            </table>
+        </div>
+
+        <div class="nav">
+            <a href="summary_report.html">← Back to Summary</a>
+        </div>
+    </div>
+</body>
+</html>

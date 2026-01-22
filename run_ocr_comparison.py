@@ -6,18 +6,57 @@ Runs Mistral OCR on archive images and compares output against
 existing transcriptions, generating HTML comparison reports.
 """
 
+import argparse
 import base64
 import os
+import re
 import sys
 import json
 import difflib
+import string
 from datetime import datetime
 from pathlib import Path
+from dataclasses import dataclass
 from dotenv import load_dotenv
 from mistralai import Mistral
 
 # Load environment variables from .env file
 load_dotenv()
+
+
+@dataclass
+class CompareOptions:
+    """Options for text comparison."""
+    ignore_case: bool = False
+    ignore_punctuation: bool = False
+
+    def describe(self) -> str:
+        """Return a human-readable description of active options."""
+        opts = []
+        if self.ignore_case:
+            opts.append("case-insensitive")
+        if self.ignore_punctuation:
+            opts.append("ignoring punctuation")
+        return ", ".join(opts) if opts else "exact matching"
+
+
+def normalize_text(text: str, options: CompareOptions) -> str:
+    """Normalize text based on comparison options."""
+    if options.ignore_case:
+        text = text.lower()
+    if options.ignore_punctuation:
+        # Remove punctuation but keep spaces and alphanumeric
+        text = re.sub(r'[^\w\s]', '', text)
+    return text
+
+
+def normalize_word(word: str, options: CompareOptions) -> str:
+    """Normalize a single word based on comparison options."""
+    if options.ignore_case:
+        word = word.lower()
+    if options.ignore_punctuation:
+        word = word.strip(string.punctuation)
+    return word
 
 # Directories
 IMAGES_DIR = Path("./images")
@@ -62,12 +101,38 @@ def run_ocr(client: Mistral, image_path: Path) -> str:
     return "\n".join(text_parts)
 
 
-def diff_texts(text1: str, text2: str) -> tuple:
-    """Compare two texts word by word and return stats and differences."""
-    words1 = text1.split()
-    words2 = text2.split()
+def diff_texts(text1: str, text2: str, options: CompareOptions = None) -> tuple:
+    """Compare two texts word by word and return stats and differences.
 
-    matcher = difflib.SequenceMatcher(None, words1, words2)
+    Args:
+        text1: Source/reference text
+        text2: OCR output text
+        options: Comparison options (ignore_case, ignore_punctuation)
+
+    Returns:
+        Tuple of (stats dict, differences list)
+    """
+    if options is None:
+        options = CompareOptions()
+
+    words1_orig = text1.split()
+    words2_orig = text2.split()
+
+    # Create normalized versions for comparison
+    words1_norm = [normalize_word(w, options) for w in words1_orig]
+    words2_norm = [normalize_word(w, options) for w in words2_orig]
+
+    # Filter out empty words (can happen with punctuation-only tokens)
+    if options.ignore_punctuation:
+        filtered1 = [(orig, norm) for orig, norm in zip(words1_orig, words1_norm) if norm]
+        filtered2 = [(orig, norm) for orig, norm in zip(words2_orig, words2_norm) if norm]
+        words1_orig = [f[0] for f in filtered1]
+        words1_norm = [f[1] for f in filtered1]
+        words2_orig = [f[0] for f in filtered2]
+        words2_norm = [f[1] for f in filtered2]
+
+    # Use normalized words for matching
+    matcher = difflib.SequenceMatcher(None, words1_norm, words2_norm)
 
     stats = {
         'equal': 0,
@@ -75,8 +140,8 @@ def diff_texts(text1: str, text2: str) -> tuple:
         'replaced': 0,
         'deleted': 0,
         'inserted': 0,
-        'total_words1': len(words1),
-        'total_words2': len(words2),
+        'total_words1': len(words1_norm),
+        'total_words2': len(words2_norm),
     }
 
     differences = []
@@ -85,30 +150,35 @@ def diff_texts(text1: str, text2: str) -> tuple:
         if tag == 'equal':
             stats['equal'] += (i2 - i1)
         elif tag == 'replace':
-            src_words = words1[i1:i2]
-            ocr_words = words2[j1:j2]
-            if len(src_words) == len(ocr_words):
-                for w1, w2 in zip(src_words, ocr_words):
-                    ratio = difflib.SequenceMatcher(None, w1, w2).ratio()
+            src_words_orig = words1_orig[i1:i2]
+            src_words_norm = words1_norm[i1:i2]
+            ocr_words_orig = words2_orig[j1:j2]
+            ocr_words_norm = words2_norm[j1:j2]
+
+            if len(src_words_norm) == len(ocr_words_norm):
+                for w1_orig, w1_norm, w2_orig, w2_norm in zip(
+                    src_words_orig, src_words_norm, ocr_words_orig, ocr_words_norm
+                ):
+                    ratio = difflib.SequenceMatcher(None, w1_norm, w2_norm).ratio()
                     if ratio > 0.5:
                         stats['similar'] += 1
-                        differences.append((w1, w2, 'similar'))
+                        differences.append((w1_orig, w2_orig, 'similar'))
                     else:
                         stats['replaced'] += 1
-                        differences.append((w1, w2, 'replaced'))
+                        differences.append((w1_orig, w2_orig, 'replaced'))
             else:
-                for w in src_words:
+                for w in src_words_orig:
                     stats['deleted'] += 1
                     differences.append((w, '', 'deleted'))
-                for w in ocr_words:
+                for w in ocr_words_orig:
                     stats['inserted'] += 1
                     differences.append(('', w, 'inserted'))
         elif tag == 'delete':
-            for w in words1[i1:i2]:
+            for w in words1_orig[i1:i2]:
                 stats['deleted'] += 1
                 differences.append((w, '', 'deleted'))
         elif tag == 'insert':
-            for w in words2[j1:j2]:
+            for w in words2_orig[j1:j2]:
                 stats['inserted'] += 1
                 differences.append(('', w, 'inserted'))
 
@@ -122,12 +192,29 @@ def generate_comparison_html(
     ocr_text: str,
     stats: dict,
     differences: list,
-    output_file: Path
+    output_file: Path,
+    options: CompareOptions = None
 ):
     """Generate an HTML comparison report."""
+    if options is None:
+        options = CompareOptions()
+
     words1 = source_text.split()
     words2 = ocr_text.split()
-    matcher = difflib.SequenceMatcher(None, words1, words2)
+
+    # Normalize for matching (same as diff_texts)
+    words1_norm = [normalize_word(w, options) for w in words1]
+    words2_norm = [normalize_word(w, options) for w in words2]
+
+    if options.ignore_punctuation:
+        filtered1 = [(orig, norm) for orig, norm in zip(words1, words1_norm) if norm]
+        filtered2 = [(orig, norm) for orig, norm in zip(words2, words2_norm) if norm]
+        words1 = [f[0] for f in filtered1]
+        words1_norm = [f[1] for f in filtered1]
+        words2 = [f[0] for f in filtered2]
+        words2_norm = [f[1] for f in filtered2]
+
+    matcher = difflib.SequenceMatcher(None, words1_norm, words2_norm)
 
     html_text1 = []
     html_text2 = []
@@ -224,6 +311,13 @@ def generate_comparison_html(
         <h1>OCR Comparison: {item_name}</h1>
 
         <div class="panel">
+            <h2>Comparison Mode</h2>
+            <p><strong>Options:</strong> {options.describe()}</p>
+            {'<p><em>Case differences are ignored in accuracy calculations.</em></p>' if options.ignore_case else ''}
+            {'<p><em>Punctuation is ignored in accuracy calculations.</em></p>' if options.ignore_punctuation else ''}
+        </div>
+
+        <div class="panel">
             <h2>Source Image</h2>
             <img src="../images/{image_path.name}" alt="{item_name}" class="image-preview">
         </div>
@@ -294,8 +388,10 @@ def generate_comparison_html(
         f.write(html)
 
 
-def generate_summary_report(results: list, output_file: Path):
+def generate_summary_report(results: list, output_file: Path, options: CompareOptions = None):
     """Generate a summary HTML report for all items."""
+    if options is None:
+        options = CompareOptions()
     total_source_words = sum(r['stats']['total_words1'] for r in results)
     total_ocr_words = sum(r['stats']['total_words2'] for r in results)
     total_matches = sum(r['stats']['equal'] for r in results)
@@ -411,6 +507,7 @@ def generate_summary_report(results: list, output_file: Path):
             <p><strong>Source:</strong> <a href="https://catalog.archives.gov/id/54928953" target="_blank">
             https://catalog.archives.gov/id/54928953</a></p>
             <p><strong>OCR Model:</strong> mistral-ocr-latest</p>
+            <p><strong>Comparison Mode:</strong> {options.describe()}</p>
         </div>
 
         <p class="meta">Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
@@ -422,15 +519,68 @@ def generate_summary_report(results: list, output_file: Path):
         f.write(html)
 
 
+def parse_args():
+    """Parse command line arguments."""
+    parser = argparse.ArgumentParser(
+        description='Run OCR comparison on archive images',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  %(prog)s                           # Exact matching (default)
+  %(prog)s --ignore-case             # Case-insensitive comparison
+  %(prog)s --ignore-punctuation      # Ignore punctuation differences
+  %(prog)s -i -p                     # Both options combined
+  %(prog)s --no-ocr                  # Skip OCR, compare only (use cached)
+        """
+    )
+    parser.add_argument(
+        '-i', '--ignore-case',
+        action='store_true',
+        help='Ignore case differences when comparing'
+    )
+    parser.add_argument(
+        '-p', '--ignore-punctuation',
+        action='store_true',
+        help='Ignore punctuation differences when comparing'
+    )
+    parser.add_argument(
+        '--no-ocr',
+        action='store_true',
+        help='Skip OCR processing, use cached results only'
+    )
+    parser.add_argument(
+        '--output-dir',
+        type=Path,
+        default=COMPARISONS_DIR,
+        help=f'Output directory for reports (default: {COMPARISONS_DIR})'
+    )
+    return parser.parse_args()
+
+
 def main():
-    # Check for API key
+    args = parse_args()
+
+    # Build comparison options
+    options = CompareOptions(
+        ignore_case=args.ignore_case,
+        ignore_punctuation=args.ignore_punctuation
+    )
+
+    print(f"Comparison mode: {options.describe()}")
+
+    # Check for API key (only needed if running OCR)
     api_key = os.environ.get("MISTRAL_API_KEY")
-    if not api_key:
+    if not api_key and not args.no_ocr:
         print("Error: MISTRAL_API_KEY environment variable not set")
+        print("Use --no-ocr to skip OCR and use cached results only")
         sys.exit(1)
 
-    # Initialize Mistral client
-    client = Mistral(api_key=api_key)
+    # Initialize Mistral client if needed
+    client = Mistral(api_key=api_key) if api_key and not args.no_ocr else None
+
+    # Create output directory
+    output_dir = args.output_dir
+    output_dir.mkdir(exist_ok=True)
 
     # Get list of images
     image_files = sorted(IMAGES_DIR.glob("item_*.jpg"))
@@ -459,6 +609,9 @@ def main():
             print(f"  Using cached OCR output")
             with open(ocr_output_path, 'r', encoding='utf-8') as f:
                 ocr_text = f.read().strip()
+        elif args.no_ocr:
+            print(f"  No cached OCR output found, skipping (--no-ocr mode)")
+            continue
         else:
             # Run OCR
             try:
@@ -472,17 +625,17 @@ def main():
                 continue
 
         # Compare texts
-        stats, differences = diff_texts(source_text, ocr_text)
+        stats, differences = diff_texts(source_text, ocr_text, options)
 
         accuracy = (stats['equal'] / stats['total_words1'] * 100) if stats['total_words1'] > 0 else 0
         print(f"  Accuracy: {accuracy:.1f}% ({stats['equal']}/{stats['total_words1']} words)")
 
         # Generate HTML comparison
         comparison_file = f"{item_name}_comparison.html"
-        comparison_path = COMPARISONS_DIR / comparison_file
+        comparison_path = output_dir / comparison_file
         generate_comparison_html(
             item_name, image_path, source_text, ocr_text,
-            stats, differences, comparison_path
+            stats, differences, comparison_path, options
         )
         print(f"  Comparison saved to {comparison_path}")
 
@@ -495,23 +648,30 @@ def main():
         })
 
     # Generate summary report
-    summary_path = COMPARISONS_DIR / "summary_report.html"
-    generate_summary_report(results, summary_path)
+    summary_path = output_dir / "summary_report.html"
+    generate_summary_report(results, summary_path, options)
     print(f"\n{'='*50}")
+    print(f"Comparison mode: {options.describe()}")
     print(f"Summary report saved to: {summary_path}")
-    print(f"Individual comparisons saved to: {COMPARISONS_DIR}/")
+    print(f"Individual comparisons saved to: {output_dir}/")
     print(f"OCR outputs saved to: {OCR_OUTPUT_DIR}/")
 
     # Save JSON results
-    json_results = []
+    json_results = {
+        'options': {
+            'ignore_case': options.ignore_case,
+            'ignore_punctuation': options.ignore_punctuation,
+        },
+        'results': []
+    }
     for r in results:
-        json_results.append({
+        json_results['results'].append({
             'item_name': r['item_name'],
             'stats': r['stats'],
             'comparison_file': r['comparison_file']
         })
 
-    with open(COMPARISONS_DIR / "results.json", 'w') as f:
+    with open(output_dir / "results.json", 'w') as f:
         json.dump(json_results, f, indent=2)
 
 

@@ -8,6 +8,9 @@ archive/
 # Environment secrets
 .env
 
+# Large archive files
+*.tar
+
 # OS files
 .DS_Store
 Thumbs.db
